@@ -1,0 +1,158 @@
+<style>
+    #queryanalyzer-show {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+    }
+
+    #queryanalyzer-background {
+        z-index: 1000;
+        display: none;
+        position: fixed;
+        height:100%;
+        width: 100%;
+        background: #000;
+        background: rgba(0,0,0,0.75);
+    }
+    #queryanalyzer-content {
+        z-index: 1001;
+        overflow-y: auto;
+        background: #fff;
+        position: relative;
+        padding: 5px;
+        width: 960px;
+        height: 80%;
+        margin: 20px auto;
+    }
+
+    #queryanalyzer-close {
+        cursor: pointer;
+    }
+
+    #queryanalyzer-queries-container{
+        margin: 10px;
+    }
+
+    .queryanalyzer-query-parameters{
+        margin-left: 20px;
+    }
+
+    .queryanalyzer-query-container{
+        margin: 20px;
+        padding: 5px;
+        border: 1px solid;
+    }
+
+    .queryanalyzer-full-backtrace{
+        display: none;
+        overflow-y: auto;
+        background-color: #c6c6c6;
+    }
+
+    .queryanalyzer-query{
+        margin-bottom: 10px;
+    }
+
+    .queryanalyzer-query-execution-time{
+        margin-bottom: 10px;
+    }
+
+    .queryanalyzer-query-parameters{
+        margin-bottom: 10px;
+    }
+</style>
+
+<script>
+    window.onload = function(){
+        document.getElementById('queryanalyzer-show').onclick = function(){
+            document.getElementById('queryanalyzer-background').style.display = 'block';
+        }
+
+        document.getElementById('queryanalyzer-close').onclick = function(){
+            document.getElementById('queryanalyzer-background').style.display = 'none';
+        }
+
+        document.getElementById('queryanalyzer-background').onclick = function(){
+            document.getElementById('queryanalyzer-background').style.display = 'none';
+        }
+
+        document.getElementById('queryanalyzer-content').onclick = function(event){
+            event.stopPropagation();
+        }
+    };
+
+    showbacktrace = function(id){
+        document.getElementById('queryanalyzer-full-backtrace-' + id).style.display = 'block';
+    }
+
+    hidebacktrace = function(id){
+        document.getElementById('queryanalyzer-full-backtrace-' + id).style.display = 'none';
+    }
+</script>
+
+<div id="queryanalyzer-background">
+    <div id="queryanalyzer-content">
+        <div>
+            <h1>
+                Total queries: <?=count($queryData)?>
+            </h1>
+        </div>
+        <div>
+            <h2>
+                Routing trace: <?=$routingTrace?>
+            </h2>
+        </div>
+        <div id="queryanalyzer-queries-container">
+            <?foreach($queryData as $position => $data):?>
+                <?=$position+1?>.
+                <div class="queryanalyzer-query-container">
+                    <div class="queryanalyzer-query">
+                        Query: <?=$data['sql']?>
+                    </div>
+                    <div class="queryanalyzer-query-execution-time">
+                        Execution time: <?=round($data['elapse']*1000, 2)?> ms
+                    </div>
+
+                    <?if(isset($data['parameters']) && count($data['parameters']->getNamedArray()) > 0):?>
+                        <div class="queryanalyzer-query-parameters">
+                            <div>Parameters:</div>
+                            <?foreach($data['parameters']->getNamedArray() as $key => $value):?>
+                                <div>
+                                    <?=$key?> - <?=$value?>
+                                </div>
+                            <?endforeach;?>
+                        </div>
+                    <?endif;?>
+
+                    <div>
+                        Application trace: <br>
+                        <?foreach($data['applicationTrace'] as $applicationTraceEntry):?>
+                            <?=$applicationTraceEntry?><br>
+                        <?endforeach;?>
+                    </div>
+                    <span>
+                        <a class="queryanalyzer-show-backtrace" href="#" onclick="showbacktrace(<?=$position?>)">
+                            Show full backtrace
+                        </a>
+                    </span>
+                    <span>
+                        <a class="queryanalyzer-hide-backtrace" href="#" onclick="hidebacktrace(<?=$position?>)">
+                            Hide full backtrace
+                        </a>
+                    </span>
+                    <div id="queryanalyzer-full-backtrace-<?=$position?>" class="queryanalyzer-full-backtrace">
+                        Full backtrace:<br>
+                        <?foreach($data['fullBacktrace'] as $backtraceEntry):?>
+                            <?=$backtraceEntry?><br>
+                        <?endforeach;?>
+                    </div>
+                </div>
+            <?endforeach;?>
+        </div>
+        <button id="queryanalyzer-close">Close</button>
+    </div>
+</div>
+
+<a href="#" id="queryanalyzer-show">
+    Query analyzer
+</a>
