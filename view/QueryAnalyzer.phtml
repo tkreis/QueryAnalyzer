@@ -51,8 +51,8 @@
         overflow: scroll;
     }
 
-    #queryanalyzer-container>div {
-        width: 60%;
+    #queryanalyzer-container > div {
+        width: 70%;
         background: #ffffff;
         margin: 90px auto;
     }
@@ -96,6 +96,9 @@
     #queryanalyzer-container .queryanalyzer-routing-trace {
         font-size: 1.5em;
         margin: 20px 0 20px 35px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     #queryanalyzer-container .queryanalyzer-queries {
@@ -115,7 +118,10 @@
         line-height: 40px;
         margin-left: 35px;
         font-size: 1.3em;
-        font-weight: bold
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     #queryanalyzer-container .queryanalyzer-body pre {
@@ -201,6 +207,13 @@
         height: 25px;
         margin: 15px;
         cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+        #queryanalyzer-container>div {
+            width: 95%;
+            font-size: 70%
+        }
     }
 </style>
 
