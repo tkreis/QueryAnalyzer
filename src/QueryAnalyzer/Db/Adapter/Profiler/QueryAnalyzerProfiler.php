@@ -34,8 +34,9 @@ class QueryAnalyzerProfiler extends Profiler{
      */
     public function profilerFinish(){
         $this->resetTraces();
+        parent::profilerFinish();
 
-        return parent::profilerFinish();
+        return $this;
     }
 
     public function getRoutingTrace(){
@@ -43,27 +44,32 @@ class QueryAnalyzerProfiler extends Profiler{
     }
 
     public function setRoutingTrace($trace){
-        $this->routingTrace = $trace;
+      $this->routingTrace = $trace;
+
+      return $this;
     }
 
     private function buildTraces($backtrace){
         // build full backtrace
         foreach($backtrace as $caller){
-            if(isset($caller['class'])){
-                if(isset($caller['line']))
-                    $line = $caller['line'];
-                $this->fullBacktrace[] = $caller['class'].$caller['type'].$caller['function'].'[Line: '.$line.']';
+            if($this->hasClass($caller)){
+                $string = $caller['class'].$caller['type'].$caller['function'];
+
+                if($this->hasLineNumber($caller))
+                    $string .='[Line: '.$caller['line'].']';
+
+                $this->fullBacktrace[] = $string;
             }
         }
 
         // build application trace
         foreach($backtrace as $caller){
-            if(isset($caller['class'])){
-                if(strpos($caller['class'], "Zend") === false && strpos($caller['class'], "QueryAnalyzerProfiler") === false){
+            if($this->hasClass($caller)){
+                if($this->noFrameworkClass($caller)){
                     $string = $caller['class'].$caller['type'].$caller['function'];
 
-                    if(isset($caller['line']))
-                        $string .= ' [Line: '.$line.']';
+                    if($this->hasLineNumber($caller))
+                        $string .= ' [Line: '.$caller['line'].']';
 
                     $this->applicationTrace[] = $string;
                 }
@@ -71,9 +77,20 @@ class QueryAnalyzerProfiler extends Profiler{
         }
     }
 
+    private function noFrameworkClass($caller){
+      return (strpos($caller['class'], "Zend") === false && strpos($caller['class'], "QueryAnalyzerProfiler") === false);
+    }
+
+    private function hasClass($caller){
+      return isset($caller['class']);
+    }
+
+    private function hasLineNumber($caller){
+      return isset($caller['line']);
+    }
+
     private function resetTraces(){
         $this->applicationTrace = array();
         $this->fullBacktrace = array();
     }
-
 }
