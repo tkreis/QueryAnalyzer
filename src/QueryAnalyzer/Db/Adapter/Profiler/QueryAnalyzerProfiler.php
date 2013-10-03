@@ -50,29 +50,19 @@ class QueryAnalyzerProfiler extends Profiler{
     }
 
     private function buildTraces($backtrace){
-        // build full backtrace
         foreach($backtrace as $caller){
             if($this->hasClass($caller)){
                 $string = $caller['class'].$caller['type'].$caller['function'];
 
-                if($this->hasLineNumber($caller))
-                    $string .='[Line: '.$caller['line'].']';
+                if($this->hasLineNumber($caller)){
+                  $string .='[Line: '.$caller['line'].']';
+                }
 
-                $this->fullBacktrace[] = $string;
-            }
-        }
-
-        // build application trace
-        foreach($backtrace as $caller){
-            if($this->hasClass($caller)){
                 if($this->noFrameworkClass($caller)){
-                    $string = $caller['class'].$caller['type'].$caller['function'];
-
-                    if($this->hasLineNumber($caller))
-                        $string .= ' [Line: '.$caller['line'].']';
-
                     $this->applicationTrace[] = $string;
                 }
+
+                $this->fullBacktrace[] = $string;
             }
         }
     }
