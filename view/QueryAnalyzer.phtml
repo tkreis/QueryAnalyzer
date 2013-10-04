@@ -95,14 +95,6 @@
         font-weight: normal;
     }
 
-    #queryanalyzer-container .queryanalyzer-routing-trace {
-        font-size: 1.5em;
-        margin: 20px 0 20px 35px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     #queryanalyzer-container .queryanalyzer-queries {
         margin: 20px 0;
     }
@@ -240,13 +232,11 @@ foreach($queryData as $data)
 
     <div>
         <div id="queryanalyzer-close">&nbsp;</div>
-        <h1>Query Analyzer:</h1>
+        <h1>Query Analyzer: <?php echo $routingTrace; ?></h1>
         <ul class="queryanalyzer-meta">
             <li><?php echo count($queryData)?> <small>queries</small></li>
             <li><?php echo $totalExecutionTime; ?> <small>ms total</small></li>
         </ul>
-
-        <div class="queryanalyzer-routing-trace"><?php echo $routingTrace; ?></div>
 
         <div class="queryanalyzer-queries">
             <?foreach($queryData as $i => $data):?>
