@@ -52,17 +52,17 @@ class QueryAnalyzerProfiler extends Profiler{
     private function buildTraces($backtrace){
         foreach($backtrace as $caller){
             if($this->hasClass($caller)){
-                $string = $caller['class'].$caller['type'].$caller['function'];
+                $trace = $caller['class'].$caller['type'].$caller['function'];
 
                 if($this->hasLineNumber($caller)){
-                  $string .='[Line: '.$caller['line'].']';
+                    $trace .='[Line: '.$caller['line'].']';
                 }
 
                 if($this->noFrameworkClass($caller)){
-                    $this->applicationTrace[] = $string;
+                    $this->applicationTrace[] = $trace;
                 }
 
-                $this->fullBacktrace[] = $string;
+                $this->fullBacktrace[] = $trace;
             }
         }
     }
