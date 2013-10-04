@@ -16,7 +16,7 @@ class QueryAnalyzerProfiler extends Profiler{
     /**
      * @param string|StatementContainerInterface $target
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
-     * @return Profiler
+     * @return this
      */
     public function profilerStart($target){
         $this->buildTraces(debug_backtrace());
@@ -30,7 +30,7 @@ class QueryAnalyzerProfiler extends Profiler{
     }
 
     /**
-     * @return Profiler
+     * @return this
      */
     public function profilerFinish(){
         $this->resetTraces();
