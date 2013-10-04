@@ -224,7 +224,7 @@ foreach($queryData as $data)
 
 <div id="queryanalyzer-open">
     <a href="#">
-        Query Analyzer (<?php echo count($queryData)?>, <?php echo $totalExecutionTime?>ms)
+        <?php echo count($queryData)?> queries, <?php echo $totalExecutionTime?>ms total
     </a>
 </div>
 
@@ -232,7 +232,10 @@ foreach($queryData as $data)
 
     <div>
         <div id="queryanalyzer-close">&nbsp;</div>
-        <h1>Query Analyzer: <?php echo $routingTrace; ?></h1>
+        <h1>
+            Query Analyzer: <?php echo $routingTrace; ?>
+        </h1>
+
         <ul class="queryanalyzer-meta">
             <li><?php echo count($queryData)?> <small>queries</small></li>
             <li><?php echo $totalExecutionTime; ?> <small>ms total</small></li>
