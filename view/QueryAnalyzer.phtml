@@ -221,17 +221,22 @@
     }
 </style>
 
-<div id="queryanalyzer-open"><a href="#">Query Analyzer</a></div>
+<?php
+$totalExecutionTime = 0.0;
+foreach($queryData as $data)
+{
+    $totalExecutionTime += round($data['elapse'] * 1000, 3);
+}
+?>
+
+
+<div id="queryanalyzer-open">
+    <a href="#">
+        Query Analyzer (<?php echo count($queryData)?>, <?php echo $totalExecutionTime?>ms)
+    </a>
+</div>
 
 <div id="queryanalyzer-container">
-
-    <?php 
-    $totalExecutionTime = 0.0;
-    foreach($queryData as $data)
-    {
-        $totalExecutionTime += round($data['elapse'] * 1000, 3);
-    } 
-    ?>
 
     <div>
         <div id="queryanalyzer-close">&nbsp;</div>
