@@ -256,7 +256,7 @@ foreach($queryData as $data)
                     $query = str_replace(PHP_EOL, "<br/>\t", $query);
                     ?>
 
-                        <pre lang="sql"><?php echo nl2br($query); ?></pre>
+                        <?php echo SqlFormatter::format(nl2br($query)); ?>
 
                         <?if(isset($data['parameters']) && count($data['parameters']->getNamedArray()) > 0):?>
                             <div class="queryanalyzer-params">
