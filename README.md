@@ -9,7 +9,7 @@ Module that shows every executed query and the execution time.
 - Attach Profiler to your DB-Adapter.
 $serviceManager->get('Zend\Db\Adapter\Adapter')->setProfiler(new \QueryAnalyzer\Db\Adapter\Profiler\QueryAnalyzerProfiler());
 
-- If your DB Adapator does not have the name Zend\Db\Adapter\Adapter you need to create an alias in the config:
+- If your DB Adapater does not have the name Zend\Db\Adapter\Adapter you need to create an alias in the config:
 ```
 'aliases' => array(
     'Zend\Db\Adapter\Adapter' => 'your-db-adapter-name',
