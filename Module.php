@@ -12,12 +12,13 @@ class Module implements ConfigProviderInterface
     {
         $application            = $e->getApplication();
         $serviceManager         = $application->getServiceManager();
-        $sharedEventManager     = $application->getEventManager()->getSharedManager();
 
-        $profiler               = $serviceManager->get('Zend\Db\Adapter\Adapter')->getProfiler();
+        if($serviceManager->has('Zend\Db\Adapter\Adapter')){
+            $profiler               = $serviceManager->get('Zend\Db\Adapter\Adapter')->getProfiler();
 
-        if(isset($profiler)){
-            $sharedEventManager->attach('Zend\Mvc\Application', new QueryAnalyzerListener($serviceManager->get('ViewRenderer'), $profiler), null);
+            if(isset($profiler)){
+                $application->getEventManager()->getSharedManager()->attach('Zend\Mvc\Application', new QueryAnalyzerListener($serviceManager->get('ViewRenderer'), $profiler), null);
+            }
         }
     }
 
