@@ -69,7 +69,8 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
         $queryAnalyzer = new ViewModel();
         $queryAnalyzer->setVariables(array(
             'queryData' => $this->profiler->getProfiles(),
-            'routingTrace'  => $this->profiler->getRoutingTrace()
+            'routingTrace'  => $this->profiler->getRoutingTrace(),
+            'totalExecutionTime' => $this->profiler->getTotalExecutionTime()
         ));
         $queryAnalyzer->setTemplate('QueryAnalyzer');
 

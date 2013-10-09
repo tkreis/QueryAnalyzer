@@ -152,12 +152,6 @@
         font-family: 'DejaVu Sans Mono', 'Consolas', monospace;
     }
 
-    #queryanalyzer-container ul.queryanalyzer-query-meta {
-        background: #e5e1dd;
-        padding: 0 0 0 35px;
-        height: 40px;
-    }
-
     #queryanalyzer-container ul.queryanalyzer-query-meta li {
         height: 40px;
         line-height: 40px;
@@ -213,15 +207,6 @@
     }
 </style>
 
-<?php
-$totalExecutionTime = 0.0;
-foreach($queryData as $data)
-{
-    $totalExecutionTime += round($data['elapse'] * 1000, 3);
-}
-?>
-
-
 <div id="queryanalyzer-open">
     <a href="#">
         <?php echo count($queryData)?> queries, <?php echo $totalExecutionTime?>ms total
@@ -246,8 +231,9 @@ foreach($queryData as $data)
                 <div class="queryanalyzer-query">
                     <div class="queryanalyzer-head">
                         <h2>
-                        <?php echo $i + 1; ?>. 
-                        <?php echo $data['applicationTrace'][0]; ?>
+                        <?php echo $i + 1; ?>.
+                        Execution time <?php echo round($data['elapse'] * 1000, 3); ?>ms
+                        <?php //echo $data['applicationTrace'][0]; ?>
                         </h2>
                     </div>
                     <div class="queryanalyzer-body">
@@ -278,9 +264,6 @@ foreach($queryData as $data)
                             </div>
                         <?endif;?>
                     </div>
-                    <ul class="queryanalyzer-query-meta">
-                        <li><?php echo round($data['elapse'] * 1000, 3); ?> <small>ms execution time</small></li>
-                    </ul>
                 </div>
             <?endforeach; ?>
         </div> 

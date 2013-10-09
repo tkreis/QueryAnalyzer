@@ -13,6 +13,8 @@ class QueryAnalyzerProfiler extends Profiler{
 
     protected $fullBacktrace = array();
 
+    protected $totalExecutiontime = 0;
+
     /**
      * @param string|StatementContainerInterface $target
      * @throws \Zend\Db\Adapter\Exception\InvalidArgumentException
@@ -30,13 +32,24 @@ class QueryAnalyzerProfiler extends Profiler{
     }
 
     /**
-     * @return this
+     * @return Profiler
      */
     public function profilerFinish(){
         $this->resetTraces();
-        parent::profilerFinish();
 
+        if (!isset($this->profiles[$this->currentIndex])) {
+            throw new Exception\RuntimeException('A profile must be started before ' . __FUNCTION__ . ' can be called.');
+        }
+        $current = &$this->profiles[$this->currentIndex];
+        $current['end'] = microtime(true);
+        $current['elapse'] = $current['end'] - $current['start'];
+        $this->totalExecutiontime += round($current['elapse'] * 1000, 3);
+        $this->currentIndex++;
         return $this;
+    }
+
+    public function getTotalExecutionTime(){
+        return $this->totalExecutiontime;
     }
 
     public function getRoutingTrace(){
