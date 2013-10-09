@@ -2,10 +2,10 @@ QueryAnalyzer
 =============
 
 ##Setup
+- Add "weteef/queryanalyzer": "dev-master" to the require section of your composer.json
 - Attach Profiler to your DB-Adapter.
-* for example the QueryAnalyerProfiler().
-    $serviceManager
+* For example $serviceManager
       ->get('Zend\Db\Adapter\Adapter')
-      ->setProfiler(new QueryAnalyzerProfiler());
+      ->setProfiler(new \QueryAnalyzer\Db\Adapter\Profiler\QueryAnalyzerProfiler());
 
-
+After these steps the analyzer should appear on the bottom right corner of your browser window.
