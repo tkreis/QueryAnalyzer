@@ -10,8 +10,8 @@ Module that shows every executed query and the execution time.
     * For example
         ```php
         $serviceManager
-        ->get('Zend\Db\Adapter\Adapter')
-        ->setProfiler(new \QueryAnalyzer\Db\Adapter\Profiler\QueryAnalyzerProfiler());
+            ->get('Zend\Db\Adapter\Adapter')
+            ->setProfiler(new \QueryAnalyzer\Db\Adapter\Profiler\QueryAnalyzerProfiler());
         ```
 - If your DB Adapator does not have the name Zend\Db\Adapter\Adapter you need to create an alias in the config:
 ```
