@@ -21,12 +21,10 @@ class QueryAnalyzerProfiler extends Profiler{
      * @return this
      */
     public function profilerStart($target){
-        $this->buildTraces(debug_backtrace());
-
         parent::profilerStart($target);
 
-        $this->profiles[$this->currentIndex]['applicationTrace'] = $this->applicationTrace;
-        $this->profiles[$this->currentIndex]['fullBacktrace'] = $this->fullBacktrace;
+        $this->buildTraces(debug_backtrace());
+        $this->createNewProfileEntry();
 
         return $this;
     }
@@ -35,13 +33,11 @@ class QueryAnalyzerProfiler extends Profiler{
      * @return Profiler
      */
     public function profilerFinish(){
-        $this->resetTraces();
+        parent::profilerFinish();
 
-        if (!isset($this->profiles[$this->currentIndex])) {
-            throw new Exception\RuntimeException('A profile must be started before ' . __FUNCTION__ . ' can be called.');
-        }
+        $this->resetTraces();
         $this->calculateTotalExectutionTime();
-        $this->currentIndex++;
+
         return $this;
     }
 
@@ -96,9 +92,11 @@ class QueryAnalyzerProfiler extends Profiler{
     }
 
     private function calculateTotalExectutionTime(){
-        $current = &$this->profiles[$this->currentIndex];
-        $current['end'] = microtime(true);
-        $current['elapse'] = $current['end'] - $current['start'];
         $this->totalExecutiontime += round($current['elapse'] * 1000, 3);
+    }
+
+    private function createNewProfileEntry(){
+      $this->profiles[$this->currentIndex]['applicationTrace'] = $this->applicationTrace;
+      $this->profiles[$this->currentIndex]['fullBacktrace'] = $this->fullBacktrace;
     }
 }
