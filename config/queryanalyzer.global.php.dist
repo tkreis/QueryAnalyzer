@@ -1,0 +1,10 @@
+<?php
+
+return array(
+    'queryanalyzer' => array(
+        //left OR right
+        'button_position_horizontal'  => 'right',
+        //top OR bottom
+        'button_position_vertical'    => 'bottom'
+    ),
+);
