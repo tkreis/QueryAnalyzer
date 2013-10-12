@@ -209,7 +209,8 @@
 
 <div id="queryanalyzer-open">
     <a href="#">
-        <?php echo $profiles->getQueryCount(); ?> queries, <?php echo $profiles->getTotalExecutionTime(); ?>ms total </a>
+        <?php echo count($queryData)?> queries, <?php echo $totalExecutionTime?>ms total
+    </a>
 </div>
 
 <div id="queryanalyzer-container">
@@ -217,27 +218,28 @@
     <div>
         <div id="queryanalyzer-close">&nbsp;</div>
         <h1>
-            Query Analyzer: <?php echo $profiles->getRoutingTrace();; ?>
+            Query Analyzer: <?php echo $routingTrace; ?>
         </h1>
 
         <ul class="queryanalyzer-meta">
-            <li><?php echo $profiles->getQueryCount(); ?> <small>queries</small></li>
-            <li> <?php echo $profiles->getTotalExecutionTime(); ?><small> ms total </small></li>
+            <li><?php echo count($queryData)?> <small>queries</small></li>
+            <li><?php echo $totalExecutionTime; ?> <small>ms total</small></li>
         </ul>
 
         <div class="queryanalyzer-queries">
-            <?foreach($profiles->getProfiles() as $i => $profile):?>
+            <?foreach($queryData as $i => $data):?>
                 <div class="queryanalyzer-query">
                     <div class="queryanalyzer-head">
                         <h2>
                         <?php echo $i + 1; ?>.
-                        Execution time <?php echo $profile->getExecutionTime() ?>ms
+                        Execution time <?php echo round($data['elapse'] * 1000, 3); ?>ms
+                        <?php //echo $data['applicationTrace'][0]; ?>
                         </h2>
                     </div>
                     <div class="queryanalyzer-body">
-                        <?php echo SqlFormatter::format($profile->getSql()); ?>
+                        <?php echo SqlFormatter::format(trim($data['sql'])); ?>
 
-                        <?if($profile->hasParameters()):?>
+                        <?if(isset($data['parameters']) && count($data['parameters']->getNamedArray()) > 0):?>
                             <div class="queryanalyzer-params">
                                 <table>
                                     <thead>
@@ -251,7 +253,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?foreach($profile->getParameters() as $key => $value):?>
+                                        <?foreach($data['parameters']->getNamedArray() as $key => $value):?>
                                             <tr>
                                                 <td><?php echo $key; ?></td>
                                                 <td><?php echo $value; ?></td>
