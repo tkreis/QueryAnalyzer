@@ -12,10 +12,13 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
 
     protected $profiler;
 
-    public function __construct($renderer, $profiler)
+    protected $queryAnalyzerConfig;
+
+    public function __construct($renderer, $profiler, $queryAnalyzerConfig = array())
     {
         $this->renderer = $renderer;
         $this->profiler = $profiler;
+        $this->queryAnalyzerConfig = $queryAnalyzerConfig;
     }
     /**
      * Attach one or more listeners
@@ -68,9 +71,11 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
 
         $queryAnalyzer = new ViewModel();
         $queryAnalyzer->setVariables(array(
-            'queryData' => $this->profiler->getProfiles(),
-            'routingTrace'  => $this->profiler->getRoutingTrace(),
-            'totalExecutionTime' => $this->profiler->getTotalExecutionTime()
+            'queryData'                 => $this->profiler->getProfiles(),
+            'routingTrace'              => $this->profiler->getRoutingTrace(),
+            'totalExecutionTime'        => $this->profiler->getTotalExecutionTime(),
+            'buttonPositionVertical'    => isset($this->queryAnalyzerConfig['button_position_vertical']) ? $this->queryAnalyzerConfig['button_position_vertical'] : 'bottom',
+            'buttonPositionHorizontal'  => isset($this->queryAnalyzerConfig['button_position_horizontal']) ? $this->queryAnalyzerConfig['button_position_horizontal'] : 'right'
         ));
         $queryAnalyzer->setTemplate('QueryAnalyzer');
 

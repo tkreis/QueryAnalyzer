@@ -14,10 +14,18 @@ class Module implements ConfigProviderInterface
         $serviceManager         = $application->getServiceManager();
 
         if($serviceManager->has('Zend\Db\Adapter\Adapter')){
-            $profiler               = $serviceManager->get('Zend\Db\Adapter\Adapter')->getProfiler();
+            $profiler = $serviceManager->get('Zend\Db\Adapter\Adapter')->getProfiler();
+            $config = $serviceManager->get('config');
 
             if(isset($profiler)){
-                $application->getEventManager()->getSharedManager()->attach('Zend\Mvc\Application', new QueryAnalyzerListener($serviceManager->get('ViewRenderer'), $profiler), null);
+                $application->getEventManager()->getSharedManager()->attach(
+                    'Zend\Mvc\Application',
+                    new QueryAnalyzerListener(
+                        $serviceManager->get('ViewRenderer'),
+                        $profiler,
+                        isset($config['queryanalyzer']) ? $config['queryanalyzer'] : array()
+                    ),
+                    null);
             }
         }
     }
