@@ -17,15 +17,18 @@ class Module implements ConfigProviderInterface
             $profiler = $serviceManager->get('Zend\Db\Adapter\Adapter')->getProfiler();
             $config = $serviceManager->get('config');
 
-            if(isset($profiler)){
-                $application->getEventManager()->getSharedManager()->attach(
-                    'Zend\Mvc\Application',
-                    new QueryAnalyzerListener(
-                        $serviceManager->get('ViewRenderer'),
-                        $profiler,
-                        isset($config['queryanalyzer']) ? $config['queryanalyzer'] : array()
-                    ),
-                    null);
+            if(isset($profiler) && $profiler instanceof \QueryAnalyzer\Db\Adapter\Profiler\QueryAnalyzerProfiler){
+                $listener = new QueryAnalyzerListener(
+                    $serviceManager->get('ViewRenderer'),
+                    $profiler,
+                    $config['queryanalyzer']
+                );
+
+                foreach($config['queryanalyzer']['loggers'] as $logger){
+                    $listener->addLogger($serviceManager->get($logger));
+                }
+
+                $application->getEventManager()->getSharedManager()->attach('Zend\Mvc\Application', $listener, null);
             }
         }
     }

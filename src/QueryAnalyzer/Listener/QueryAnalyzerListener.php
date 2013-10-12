@@ -14,6 +14,8 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
 
     protected $queryAnalyzerConfig;
 
+    protected $loggers = array();
+
     public function __construct($renderer, $profiler, $queryAnalyzerConfig = array())
     {
         $this->renderer = $renderer;
@@ -34,7 +36,7 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
     {
         $this->listeners[] = $events->attach(
             'finish',
-            array($this, 'attachQueryAnalyzer'),
+            array($this, 'queryAnalyzer'),
             500
         );
 
@@ -57,25 +59,53 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
         }
     }
 
-    public function attachQueryAnalyzer(MvcEvent $e)
+    public function queryAnalyzer(MvcEvent $e)
     {
         $application = $e->getApplication();
         $request     = $application->getRequest();
+        $response = $application->getResponse();
 
+        if($this->queryAnalyzerConfig['log']){
+            $this->logQueries();
+        }
+
+        if($this->queryAnalyzerConfig['displayQueryAnalyzer']){
+            $this->injectViewModel($request, $response);
+        }
+    }
+
+    protected function logQueries()
+    {
+        foreach($this->loggers as $logger){
+            $logger->info('Route: ' . $this->profiler->getRoutingTrace());
+            $logger->info('Queries: ' . count($this->profiler->getProfiles()) . ' Total Execution time: ' . $this->profiler->getTotalExecutionTime() . 'ms');
+
+            foreach($this->profiler->getProfiles() as $i => $profile){
+                $logger->info($i + 1 . ' Execution time: '. round($profile['elapse'] * 1000, 3) . 'ms');
+                $logger->info($profile['sql']);
+
+                if(isset($profile['parameters']) && count($profile['parameters']->getNamedArray()) > 0){
+                    foreach($profile['parameters']->getNamedArray() as $key => $value){
+                        $logger->info($key . ' => ' . $value);
+                    }
+                }
+            }
+        }
+    }
+
+    protected function injectViewModel($request, $response)
+    {
         if ($request->isXmlHttpRequest()) {
             return;
         }
-
-        $response = $application->getResponse();
-
 
         $queryAnalyzer = new ViewModel();
         $queryAnalyzer->setVariables(array(
             'queryData'                 => $this->profiler->getProfiles(),
             'routingTrace'              => $this->profiler->getRoutingTrace(),
             'totalExecutionTime'        => $this->profiler->getTotalExecutionTime(),
-            'buttonPositionVertical'    => isset($this->queryAnalyzerConfig['button_position_vertical']) ? $this->queryAnalyzerConfig['button_position_vertical'] : 'bottom',
-            'buttonPositionHorizontal'  => isset($this->queryAnalyzerConfig['button_position_horizontal']) ? $this->queryAnalyzerConfig['button_position_horizontal'] : 'right'
+            'buttonPositionVertical'    => $this->queryAnalyzerConfig['button_position_vertical'],
+            'buttonPositionHorizontal'  => $this->queryAnalyzerConfig['button_position_horizontal']
         ));
         $queryAnalyzer->setTemplate('QueryAnalyzer');
 
@@ -84,7 +114,8 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
         $response->setContent($injected);
     }
 
-    public function setRoutingBacktraceOnRoute(MvcEvent $e){
+    public function setRoutingBacktraceOnRoute(MvcEvent $e)
+    {
         $application = $e->getApplication();
         $serviceManager = $application->getServiceManager();
 
@@ -93,5 +124,10 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
         $controllerClass = $serviceManager->get('config')['controllers']['invokables'][$controllerKey];
 
         $this->profiler->setRoutingTrace($routeMatch->getMatchedRouteName().' - '.$controllerClass.'->'.$routeMatch->getParam('action', 'index').'Action()');
+    }
+
+    public function addLogger($logger)
+    {
+        $this->loggers[] = $logger;
     }
 }
