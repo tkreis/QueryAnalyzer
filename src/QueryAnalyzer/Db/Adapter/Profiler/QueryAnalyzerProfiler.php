@@ -83,6 +83,9 @@ class QueryAnalyzerProfiler extends Profiler{
 
                 if($this->noFrameworkClass($caller)){
                     $this->applicationTrace[] = $traceEntry;
+                    $traceEntry['applicationTrace'] = true;
+                }else{
+                    $traceEntry['applicationTrace'] = false;
                 }
 
                 $this->fullBacktrace[] = $traceEntry;
@@ -109,5 +112,39 @@ class QueryAnalyzerProfiler extends Profiler{
     private function resetTraces(){
         $this->applicationTrace = array();
         $this->fullBacktrace = array();
+    }
+    /**
+     * @return array
+     */
+    public function getProfiles($order = false)
+    {
+        if(is_string($order)){
+            $order = strtolower($order);
+            if(strcmp($order, 'asc')){
+                $this->sortProfilesByExecutionTimeASC();
+            }elseif(strcmp($order, 'desc')){
+                $this->sortProfilesByExecutionTimeDESC();
+            }
+        }
+
+        return $this->profiles;
+    }
+
+    public function sortProfilesByExecutionTimeASC(){
+        usort($this->profiles, function($a, $b){
+            if($a['elapse'] == $b['elapse'])
+                return 0;
+
+            return ($a['elapse'] < $b['elapse']) ? 1 : -1;
+        });
+    }
+
+    public function sortProfilesByExecutionTimeDESC(){
+        usort($this->profiles, function($a, $b){
+            if($a['elapse'] == $b['elapse'])
+                return 0;
+
+            return ($a['elapse'] > $b['elapse']) ? 1 : -1;
+        });
     }
 }

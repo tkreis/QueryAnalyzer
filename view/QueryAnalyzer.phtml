@@ -1,8 +1,5 @@
 <style type="text/css">
-    .left {
-        float: left;
-    }
-        /*
+     /*
      * Try to remove inherited css properties
      */
     #queryanalyzer-container * {
@@ -49,7 +46,7 @@
         top: 0;
         left: 0;
         background: rgba(0,0,0,.64);
-        z-index: 1024;
+        z-index: 10000;
         font-family: 'Helvetica', Arial;
         overflow: scroll;
     }
@@ -165,6 +162,7 @@
 
     #queryanalyzer-container .queryanalyzer-query-information {
         display: none;
+        padding: 15px;
     }
 
     #queryanalyzer-container .queryanalyzer-information-header ul{
@@ -175,7 +173,7 @@
 
     #queryanalyzer-container .queryanalyzer-information-header li{
         float: left;
-        border: 1px solid;
+        border: 1px solid #e5e1dd;
         border-bottom-width: 0;
         margin: 0 0.5em 0 0;
     }
@@ -185,7 +183,6 @@
     }
 
     #queryanalyzer-container .queryanalyzer-information{
-        border: 1px solid;
         clear: both;
     }
 
@@ -195,12 +192,8 @@
         background: white;
     }
 
-    #queryanalyzer-container .queryanalyzer-apptrace{
-        display: block;
-    }
-
     #queryanalyzer-container .queryanalyzer-full-backtrace{
-        display: none;
+        display: block;
     }
 
     #queryanalyzer-container .queryanalyzer-trace {
@@ -223,7 +216,7 @@
     }
 
     #queryanalyzer-container .queryanalyzer-params{
-        padding: 0 35px 20px;
+        padding: 0 20px 20px;
         border-collapse: collapse;
     }
 
@@ -253,6 +246,10 @@
         font-weight: bold;
         float: left;
     }
+
+#queryanalyzer-container .queryanalyzer-apllication-backtrace {
+    background-color: #bebebe
+}
 
     #queryanalyzer-open {
         position: fixed;
@@ -335,37 +332,14 @@
                         <div id="queryanalyzer-query-info-<?php echo $i?>" class="queryanalyzer-query-information">
                             <div id="queryanalyzer-info-header-<?php echo $i?>" class="queryanalyzer-information-header">
                                 <ul>
-                                    <li class="selected-information-tab"><a href="#" onclick="switchInformation(0,<?php echo $i?>)">Execution trace</a></li>
-                                    <li><a href="#" onclick="switchInformation(1,<?php echo $i?>)">Full backtrace</a></li>
+                                    <li class="selected-information-tab">
+                                        <a href="#" onclick="switchInformation(0,<?php echo $i?>)">
+                                            Full backtrace
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <div id="queryanalyzer-info-<?php echo $i ?>" class="queryanalyzer-information">
-                                <div id="queryanalyzer-apptrace-<?php echo $i?>" class="queryanalyzer-apptrace">
-                                    <table class="queryanalyzer-trace">
-                                        <thead>
-                                        <tr>
-                                            <th>
-                                                #
-                                            </th>
-                                            <th>
-                                                Function
-                                            </th>
-                                            <th>
-                                                Location
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php foreach($data['applicationTrace'] as $x => $applicationTraceEntry):?>
-                                            <tr>
-                                                <td><?php echo $x; ?></td>
-                                                <td><?php echo $applicationTraceEntry['function']; ?></td>
-                                                <td><?php echo "..\\".$applicationTraceEntry['file'].':'.$applicationTraceEntry['line']; ?></td>
-                                            </tr>
-                                        <?php endforeach;?>
-                                        </tbody>
-                                    </table>
-                                </div>
                                 <div id="queryanalyzer-full-backtrace-<?=$i?>" class="queryanalyzer-full-backtrace">
                                     <table class="queryanalyzer-trace">
                                         <thead>
@@ -383,7 +357,11 @@
                                         </thead>
                                         <tbody>
                                         <?php foreach($data['fullBacktrace'] as $x => $backtraceEntry):?>
-                                            <tr>
+                                            <?if($backtraceEntry['applicationTrace']):?>
+                                                <tr class="queryanalyzer-apllication-backtrace">
+                                            <?else:?>
+                                                <tr>
+                                            <?endif;?>
                                                 <td><?php echo $x; ?></td>
                                                 <td><?php echo $backtraceEntry['function']; ?></td>
                                                 <td><?php echo "..\\".$backtraceEntry['file'].':'.$backtraceEntry['line']; ?></td>

@@ -8,6 +8,10 @@ return array(
         'loggers' => array(
         ),
 
+        //False, ASC or DESC
+        'orderByExecutionTime' => false,
+
+        //Button appearance
         'appearance' => array(
             //left OR right
             'button_position_horizontal'  => 'right',
