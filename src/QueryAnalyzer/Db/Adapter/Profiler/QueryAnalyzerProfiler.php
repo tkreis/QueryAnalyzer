@@ -71,6 +71,9 @@ class QueryAnalyzerProfiler extends Profiler{
                 if($this->hasFileEntry($caller)){
                     $filename = substr (strrchr ($caller['file'], "\\"), 1);
                     $traceEntry['file'] = $filename;
+                    $traceEntry['fullFileName'] = $caller['file'];
+
+
                 }else{
                     $traceEntry['file'] = "not traceable";
                 }

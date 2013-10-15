@@ -364,7 +364,15 @@
                                             <?endif;?>
                                                 <td><?php echo $x; ?></td>
                                                 <td><?php echo $backtraceEntry['function']; ?></td>
-                                                <td><?php echo "..\\".$backtraceEntry['file'].':'.$backtraceEntry['line']; ?></td>
+                                                <td>
+                                                  <?php if($frameworkLinker->belongsToRepository()): ?>
+                                                    <a href="<?php echo $frameworkLinker->generateLink($backtraceEntry['fullFileName']); ?> ">
+                                                      <?php echo "..\\".$backtraceEntry['file'].':'.$backtraceEntry['line']; ?>
+                                                    </a>
+                                                  <?php else: ?>
+                                                      <?php echo "..\\".$backtraceEntry['file'].':'.$backtraceEntry['line']; ?>
+                                                  <?php endif; ?>
+                                                </td>
                                             </tr>
                                         <?php endforeach;?>
                                         </tbody>

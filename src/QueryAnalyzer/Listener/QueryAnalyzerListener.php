@@ -5,6 +5,8 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
+use \QueryAnalyzer\Linker;
+
 
 class QueryAnalyzerListener implements ListenerAggregateInterface
 {
@@ -100,11 +102,13 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
         }
 
         $queryAnalyzer = new ViewModel();
+
         $queryAnalyzer->setVariables(array(
             'queryData'                 => $this->profiler->getProfiles($this->queryAnalyzerConfig['orderByExecutionTime']),
             'routingTrace'              => $this->profiler->getRoutingTrace(),
             'totalExecutionTime'        => $this->profiler->getTotalExecutionTime(),
-            'style'                     => $this->queryAnalyzerConfig['appearance']
+            'style'                     => $this->queryAnalyzerConfig['appearance'],
+            'frameworkLinker'           => $this->createLinker()
         ));
         $queryAnalyzer->setTemplate('QueryAnalyzer');
 
@@ -128,5 +132,13 @@ class QueryAnalyzerListener implements ListenerAggregateInterface
     public function addLogger($logger)
     {
         $this->loggers[] = $logger;
+    }
+
+    public function createLinker(){
+     return new \QueryAnalyzer\Linker\Github( array(
+        'repoUrl' => 'https://github.com/zendframework/zf2/' ,
+        'branch' => 'master',
+        'workingDirectory' => '/home/thomas/repositories/zf2dummy/vendor/zendframework/zendframework/'
+      ));
     }
 }
